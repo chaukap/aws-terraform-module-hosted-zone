@@ -1,4 +1,4 @@
-data "aws_route53_zone" root_domain {
+data "aws_route53_zone" "root_domain" {
   name = "${split(".", var.domain_name)[1]}.${split(".", var.domain_name)[2]}."
 }
 
