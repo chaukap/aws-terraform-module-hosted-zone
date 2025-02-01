@@ -1,6 +1,20 @@
+data "aws_route53_zone" root_domain {
+  name = "${split(".", var.domain_name)[1]}.${split(".", var.domain_name)[2]}."
+}
+
 resource "aws_route53_zone" "main" {
   name = var.domain_name
   tags = var.tags
+}
+
+# Delegate from the root zone to the new zone
+resource "aws_route53_record" "zone_record" {
+  zone_id = data.aws_route53_zone.root_domain.zone_id
+  name    = aws_route53_zone.main.name
+  type    = "NS"
+  ttl     = 300
+
+  records = aws_route53_zone.main.name_servers
 }
 
 resource "aws_acm_certificate" "main" {
